@@ -7,7 +7,7 @@ import request from "../../utils/axios"
  * @returns {*}
  */
 export const getArticles = (params) => request.request({
-  url: '',
+  api: '',
   method: 'get',
   params: params
 });
@@ -18,7 +18,7 @@ export const getArticles = (params) => request.request({
  * @returns {*}
  */
 export const getArticle = (articleId) => request.request({
-  url: '/' + articleId,
+  api: '/' + articleId,
   method: 'get'
 });
 
@@ -28,7 +28,7 @@ export const getArticle = (articleId) => request.request({
  * @returns {*}
  */
 export const addArticle = (params) => request.request({
-  url: '',
+  api: '',
   method: 'post',
   params: params
 });
@@ -40,7 +40,7 @@ export const addArticle = (params) => request.request({
  * @returns {*}
  */
 export const saveArticle = (articleId,params) => request.request({
-  url: '/' + articleId,
+  api: '/' + articleId,
   method: 'put',
   params: params
 });

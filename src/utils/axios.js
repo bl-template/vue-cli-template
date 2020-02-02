@@ -11,10 +11,10 @@ let loading;
 // 是否是生产环境，日志只对非生成环境生效
 let noProduction = process.env.NODE_ENV !== 'production';
 
-axios.defaults.baseURL = process.env.ROOT_URL;           // 多环境地址
+axios.defaults.baseURL = process.env.VUE_APP_URL;           // 多环境地址
 axios.defaults.timeout = 45000;                   // 响应时间
 // axios.defaults.withCredentials = true;                 // 允许跨域请求Cookie
-// axios.defaults.headers['Content-Type'] = 'application/json';
+axios.defaults.headers['Content-Type'] = 'application/json';
 axios.defaults.headers['Accept'] = 'application/json';
 
 const CODE_SUCCESS = Const.CODE_SUCCESS;
@@ -52,10 +52,6 @@ axios.interceptors.response.use(function (response) {
     loading.close();
   }
   if (response.data.resultCode === CODE_NO_LOGIN) {
-    Message({
-      message: response.data.message,
-      type: 'error'
-    });
     store.dispatch('signOut');
     router.push({
       path: '/login',
@@ -110,19 +106,23 @@ export default {
       axios.request({
         url: options.api,
         method: options.method,
-        params: options.param
+        data: options.params
       }).then(response=>{
         //请求成功
         if (response != null && response.status === 200) {
-          if (response.data.resultCode === CODE_SUCCESS) {
+          if (response.data.code === CODE_SUCCESS) {
             resolve(response.data);
           } else {
+            if (!options.noMessage){
+              Message.error(response.data.message);
+            }
             reject(response.data.message);
           }
         } else {
           if (noProduction) {
             console.log("requestPost.then ！= 200：", response);
           }
+          Message.error("网络请求发生异常！");
           reject("网络请求发生异常！");
         }
       }, error => {
@@ -131,6 +131,7 @@ export default {
         if (noProduction) {
           console.log("requestPost.catch返回：", throws);
         }
+        Message.error("网络异常！");
         reject("网络异常！")
       })
     })
